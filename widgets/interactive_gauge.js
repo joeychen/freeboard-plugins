@@ -16,6 +16,12 @@
                 type: "text"
             },
             {
+            	name: "client_id",
+            	display_name: "Client Id",
+            	type: "text",
+            	default_value: ""
+            },
+            {
                 name: "value",
                 display_name: "Value",
                 type: "calculated"
@@ -75,6 +81,8 @@
 
         var currentSettings = settings;
 
+        var send_val;
+
         function createGauge() {
             if (!rendered) {
                 return;
@@ -122,8 +130,8 @@
 
         this.onHover = function(e) {
             if (!over) return
-            var val = calcPosition(e.offsetX, e.offsetY)
-            gaugeObject.refresh(val.toFixed(1))
+            var val = calcPosition(e.offsetX, e.offsetY);
+            gaugeObject.refresh(Number(val.toFixed(1)));
         }
 
         this.mouseOver = function(e) {
@@ -151,10 +159,14 @@
             if (currentSettings.click_value) {
                 gaugeObject.refresh(val)
                 lastVal = val
+                //mcs format 
+                //send_val = new Date().getTime() + "," + currentSettings.client_id + "," + val;
+                send_val = new Date().getTime() + ";" + currentSettings.client_id + ";" + val;
             }
 
-            this.mouseOut()
-            this.sendValue(currentSettings.callback, val)
+            this.mouseOut();
+            //this.sendValue(currentSettings.callback, val);
+            this.sendValue(currentSettings.callback, send_val);
         }
 
         this.render = function (element) {
@@ -205,7 +217,9 @@
 
             if (!_.isUndefined(gaugeObject)) {
                 if (!over) gaugeObject.refresh(Number(newValue));
-                lastVal = newValue
+                lastVal = newValue;
+                //send_val = new Date().getTime() + "," + currentSettings.client_id + "," + newValue;
+                send_val = new Date().getTime() + ";" + currentSettings.client_id + ";" + newValue;
             }
         }
 
